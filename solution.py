@@ -69,20 +69,38 @@ def naked_twins(values):
         the values dictionary with the naked twins eliminated from peers.
     """
     # Find all instances of naked twins
-    # Eliminate the naked twins as possibilities for their peers
+    # Also works with naked triplets and quadruplets
+    twins = {}
     for unit in unitlist:
-        samples = [box for box in unit if len(values[box]) > 1]
+        samples = [box for box in unit if 5 > len(values[box]) > 1]
         for sample in samples:
             pos = [(peer, values[peer]) for peer in samples if values[peer] == values[sample]]
             if len(pos) == len(values[sample]):
                 targets = [peer for peer in samples if values[peer] != values[sample]]
-                for digit in values[sample]:
-                    for target in targets:
-                        if digit in values[target]:
-                            values[target] = values[target].replace(digit,'')
+                if len(targets) >= 1:
+                    if sample in twins:
+                        twins[sample].append(targets)
+                    else:
+                        twins[sample] = targets
+
+    # Eliminate the naked twins as possibilities for their peers
+    for key in twins:
+        for digit in values[key]:
+            for target in twins[key]:
+                if digit in values[target]:
+                    values[target] = values[target].replace(digit,'')
     return values
 
 def eliminate(values):
+    """Convert grid string into {<box>: <value>} dict with '123456789' value for empties.
+
+    Args:
+        grid: Sudoku grid in string form, 81 characters long
+    Returns:
+        Sudoku grid in dictionary form:
+        - keys: Box labels, e.g. 'A1'
+        - values: Value in corresponding box, e.g. '8', or '123456789' if it is empty.
+    """
     for box in values.keys():
         if len(values[box]) == 1:
             for peer in peers[box]:
@@ -90,6 +108,14 @@ def eliminate(values):
     return values
 
 def only_choice(values):
+    """Finalize all values that are the only choice for a unit.
+
+    Go through all the units, and whenever there is a unit with a value
+    that only fits in one box, assign the value to this box.
+
+    Input: Sudoku in dictionary form.
+    Output: Resulting Sudoku in dictionary form after filling in only choices.
+    """
     for unit in unitlist:
         for digit in '123456789':
             dplaces = [box for box in unit if digit in values[box]]
