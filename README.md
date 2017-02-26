@@ -3,11 +3,11 @@
 
 # Question 1 (Naked Twins)
 Q: How do we use constraint propagation to solve the naked twins problem?  
-A: *Student should provide answer here*
+A: We seek all potential twins in a given unit (here twins is extended to triplets and quadruplets) given the constraints: 1) all instances of twins should have the same value 2) the number of twins in a unit should be equal to the number of digits in a twin candidate. All other non-twin values within a unit are logged as targets for a given twin. We then iterate through the twins and remove the twin digits from the targets' values. This startegy is added to our constraint propagation along eliminate() and only_choice() for recursion.
 
 # Question 2 (Diagonal Sudoku)
 Q: How do we use constraint propagation to solve the diagonal sudoku problem?  
-A: *Student should provide answer here*
+A: By defining the diagonal units and adding them to the unitlist we add them to the constraints to be considered by the strategies downstream.
 
 ### Install
 
